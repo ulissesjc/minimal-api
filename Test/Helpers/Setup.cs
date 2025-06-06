@@ -1,39 +1,42 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using MinimalApi.Dominio.Interfaces;
-using Test.Mocks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Win32.SafeHandles;
+using minimal_api.Domínio.Interfaces;
+using minimal_api.Infraestrutura.Db;
+using Test.Mocks;
 
-namespace Test.Helpers;
-
-public class Setup
+namespace Test.Helpers
 {
-    public const string PORT = "5001";
-    public static TestContext testContext = default!;
-    public static WebApplicationFactory<Startup> http = default!;
-    public static HttpClient client = default!;
-
-    public static void ClassInit(TestContext testContext)
+    public class Setup
     {
-        Setup.testContext = testContext;
-        Setup.http = new WebApplicationFactory<Startup>();
+        public const string PORT = "5001";
+        public static TestContext testContext = default!;
+        public static WebApplicationFactory<Startup> http = default!;
+        public static HttpClient client = default!;
 
-        Setup.http = Setup.http.WithWebHostBuilder(builder =>
+        public static void ClassInit(TestContext testContext)
         {
-            builder.UseSetting("https_port", Setup.PORT).UseEnvironment("Testing");
-            
-            builder.ConfigureServices(services =>
+            Setup.testContext = testContext;
+            Setup.http = new WebApplicationFactory<Startup>();
+
+            Setup.http = Setup.http.WithWebHostBuilder(builder =>
             {
-                services.AddScoped<IAdministradorServico, AdministradorServicoMock>();
+                builder.UseSetting("https_port", Setup.PORT).UseEnvironment("Testing");
+
+                builder.ConfigureServices(services =>
+                {
+                    services.AddScoped<IAdministradorServico, AdministradorServicoMock>();
+                });
             });
 
-        });
-
-        Setup.client = Setup.http.CreateClient();
-    }
-
-    public static void ClassCleanup()
-    {
-        Setup.http.Dispose();
+            Setup.client = Setup.http.CreateClient();
+        }
+        public static void ClassCleanup()
+        {
+                Setup.http.Dispose();    
+        }
     }
 }

@@ -1,9 +1,9 @@
-using System.Net;
-using System.Text;
 using System.Text.Json;
-using MinimalApi.Dominio.ModelViews;
-using MinimalApi.DTOs;
+using System.Text.Json.Nodes;
+using minimal_api.Domínio.DTOs;
 using Test.Helpers;
+using System.Text;
+using minimal_api.Domínio.ModelViews;
 
 namespace Test.Requests;
 
@@ -21,23 +21,25 @@ public class AdministradorRequestTest
     {
         Setup.ClassCleanup();
     }
-    
+
     [TestMethod]
     public async Task TestarGetSetPropriedades()
     {
         // Arrange
-        var loginDTO = new LoginDTO{
+        var loginDTO = new LoginDTO
+        {
             Email = "adm@teste.com",
             Senha = "123456"
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(loginDTO), Encoding.UTF8,  "Application/json");
+        var content = new StringContent(JsonSerializer.Serialize(loginDTO), Encoding.UTF8, "Application/json");
+
 
         // Act
-        var response = await Setup.client.PostAsync("/administradores/login", content);
+        var response = await Setup.client.PostAsync("/login", content);
 
         // Assert
-        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        Assert.AreEqual(200, (long)response.StatusCode);
 
         var result = await response.Content.ReadAsStringAsync();
         var admLogado = JsonSerializer.Deserialize<AdministradorLogado>(result, new JsonSerializerOptions
@@ -48,7 +50,5 @@ public class AdministradorRequestTest
         Assert.IsNotNull(admLogado?.Email ?? "");
         Assert.IsNotNull(admLogado?.Perfil ?? "");
         Assert.IsNotNull(admLogado?.Token ?? "");
-
-        Console.WriteLine(admLogado?.Token);
     }
 }

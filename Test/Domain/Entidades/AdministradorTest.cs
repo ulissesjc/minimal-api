@@ -1,4 +1,4 @@
-using MinimalApi.Dominio.Entidades;
+using minimal_api.Domínio.Entidades;
 
 namespace Test.Domain.Entidades;
 
